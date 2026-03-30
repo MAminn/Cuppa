@@ -5,7 +5,7 @@ import {
   useMotionValueEvent,
   AnimatePresence,
 } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 
 const ease = [0.16, 1, 0.3, 1];
 
@@ -67,6 +67,41 @@ function SectionLabel({ text, variant = "dark" }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════ *
+ *  INTRO LOADER                                                          *
+ * ═══════════════════════════════════════════════════════════════════════ */
+function IntroLoader({ onComplete }) {
+  const [phase, setPhase] = useState("fade-in");
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase("hold"), 500);
+    const t2 = setTimeout(() => setPhase("exit"), 1300);
+    const t3 = setTimeout(() => onComplete(), 2100);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [onComplete]);
+
+  return (
+    <motion.div
+      className='fixed inset-0 z-[100] bg-[#0a0a0a] flex items-center justify-center'
+      animate={phase === "exit" ? { y: "-100%" } : { y: 0 }}
+      transition={
+        phase === "exit" ? { duration: 0.8, ease: [0.16, 1, 0.3, 1] } : {}
+      }>
+      <motion.span
+        className='text-[16px] font-semibold tracking-[0.6em] text-white uppercase'
+        initial={{ opacity: 0 }}
+        animate={{ opacity: phase === "fade-in" ? 0 : 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}>
+        CUPPA
+      </motion.span>
+    </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════ *
  *  1. NAVIGATION                                                         *
  * ═══════════════════════════════════════════════════════════════════════ */
 function Nav() {
@@ -87,12 +122,18 @@ function Nav() {
       <div className='flex items-center justify-between px-6 md:px-12 lg:px-16 py-5'>
         <a
           href='#'
-          className='text-[12px] font-semibold tracking-[0.5em] text-white uppercase no-underline'>
+          className='text-[30px] font-semibold tracking-[0.5em] text-white uppercase no-underline'>
           CUPPA
         </a>
         <a
           href='#connect'
-          className='text-[10px] font-medium tracking-[0.3em] text-white/40 uppercase no-underline hover:text-white transition-colors duration-300'>
+          onClick={(e) => {
+            e.preventDefault();
+            document
+              .getElementById("connect")
+              ?.scrollIntoView({ behavior: "smooth" });
+          }}
+          className='text-[10px] font-medium tracking-[0.3em] text-white/40 uppercase no-underline hover:text-white transition-colors duration-300 cursor-pointer'>
           CONTACT
         </a>
       </div>
@@ -113,6 +154,17 @@ const headlineLines = [
 function Hero() {
   return (
     <section className='relative min-h-screen flex flex-col justify-end bg-[#0a0a0a] overflow-hidden px-6 md:px-12 lg:px-16 pb-32 md:pb-44'>
+      {/* Background texture */}
+      <div
+        className='absolute inset-0 pointer-events-none opacity-20'
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1582655299221-2b6bff351df0?w=1920&q=80')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          mixBlendMode: "luminosity",
+        }}
+      />
       {/* Ambient radial gradient */}
       <div
         className='absolute inset-0 pointer-events-none'
@@ -134,7 +186,7 @@ function Hero() {
         <div className='h-px w-16 bg-white/10 mb-8' />
 
         {/* Headline — clip-mask staggered reveal */}
-        <h1 className='text-[clamp(2.4rem,7.5vw,7.5rem)] font-[200] leading-[0.92] tracking-tight text-white uppercase'>
+        <h1 className='text-[clamp(2.6rem,8.5vw,9rem)] font-[200] leading-[0.92] tracking-tight text-white uppercase'>
           {headlineLines.map((line, i) => (
             <div key={i} className='overflow-hidden'>
               <motion.div
@@ -170,7 +222,7 @@ function Hero() {
             href='https://wa.me/20XXXXXXXXXX'
             target='_blank'
             rel='noopener noreferrer'
-            className='group inline-flex items-center gap-3 bg-white text-black px-12 py-5 border-0 outline-none ring-0 focus:outline-none focus:ring-0 no-underline w-full sm:w-auto justify-center shrink-0'
+            className='group inline-flex items-center gap-3 bg-white text-black px-12 py-5 border-0 outline-none ring-0 focus:outline-none focus:ring-0 no-underline w-full sm:w-auto justify-center shrink-0 shadow-[0_2px_20px_rgba(255,255,255,0.08)] hover:shadow-[0_4px_30px_rgba(255,255,255,0.12)] transition-shadow duration-300'
             whileHover={{ y: -2 }}
             transition={{ duration: 0.25, ease: "easeOut" }}>
             <WhatsAppIcon className='w-[18px] h-[18px] opacity-60 group-hover:opacity-100 transition-opacity duration-300' />
@@ -229,7 +281,7 @@ function Marquee() {
  * ═══════════════════════════════════════════════════════════════════════ */
 function About() {
   return (
-    <section className='relative bg-[#f8f7f5] py-32 md:py-48 px-6 md:px-12 lg:px-16 overflow-hidden'>
+    <section className='relative bg-[#f8f7f5] border-t border-black/[0.06] py-32 md:py-48 px-6 md:px-12 lg:px-16 overflow-hidden'>
       {/* Decorative 01 */}
       <span className='absolute top-8 left-6 md:left-12 text-[8rem] md:text-[12rem] font-[100] text-black/[0.03] select-none pointer-events-none leading-none'>
         01
@@ -309,7 +361,7 @@ function Capabilities() {
               <div
                 className={`group pt-8 pb-12 pr-8 border-t border-white/[0.06] lg:border-t-0 ${
                   i > 0
-                    ? "lg:border-l lg:border-white/[0.06] lg:pl-8"
+                    ? "lg:border-l lg:border-white/[0.1] lg:pl-8"
                     : "lg:border-l-0 lg:pl-0"
                 }`}>
                 <p className='text-[10px] font-light tracking-[0.25em] text-white/15 mb-6 group-hover:text-white/40 transition-colors duration-300'>
@@ -337,7 +389,7 @@ function Connect() {
   return (
     <section
       id='connect'
-      className='relative bg-[#f8f7f5] py-36 md:py-52 px-6 md:px-12 lg:px-16 overflow-hidden'>
+      className='relative bg-white py-36 md:py-52 px-6 md:px-12 lg:px-16 overflow-hidden'>
       {/* Decorative 02 */}
       <span className='absolute top-12 md:top-16 right-6 md:right-12 text-[8rem] md:text-[12rem] font-[100] text-black/[0.03] select-none pointer-events-none leading-none'>
         02
@@ -431,7 +483,8 @@ function Connect() {
  * ═══════════════════════════════════════════════════════════════════════ */
 function Footer() {
   return (
-    <footer className='bg-[#0a0a0a] text-white px-6 md:px-12 lg:px-16 py-12 md:py-16 text-center'>
+    <footer className='bg-[#0a0a0a] text-white border-t border-white/[0.06] px-6 md:px-12 lg:px-16 py-16 md:py-24 text-center'>
+      <div className='h-px w-12 bg-white/10 mx-auto mb-8' />
       <p className='text-[12px] font-semibold tracking-[0.5em] uppercase mb-5'>
         CUPPA
       </p>
@@ -476,6 +529,8 @@ function WhatsAppFab({ connectInView, pastHero }) {
  *  APP                                                                    *
  * ═══════════════════════════════════════════════════════════════════════ */
 export default function App() {
+  const [loading, setLoading] = useState(true);
+  const handleLoaded = useCallback(() => setLoading(false), []);
   const connectRef = useRef(null);
   const connectInView = useInView(connectRef, {
     margin: "-50% 0px 0px 0px",
@@ -488,22 +543,27 @@ export default function App() {
   });
 
   return (
-    <div className='grain'>
-      <Nav />
-      <Hero />
-      <Marquee />
-      <About />
-      <Capabilities />
-      <div className='relative'>
-        <div
-          ref={connectRef}
-          className='absolute inset-0 pointer-events-none'
-          aria-hidden='true'
-        />
-        <Connect />
+    <>
+      <AnimatePresence>
+        {loading && <IntroLoader onComplete={handleLoaded} />}
+      </AnimatePresence>
+      <div className='grain'>
+        <Nav />
+        <Hero />
+        <Marquee />
+        <About />
+        <Capabilities />
+        <div className='relative'>
+          <div
+            ref={connectRef}
+            className='absolute inset-0 pointer-events-none'
+            aria-hidden='true'
+          />
+          <Connect />
+        </div>
+        <Footer />
+        <WhatsAppFab connectInView={connectInView} pastHero={pastHero} />
       </div>
-      <Footer />
-      <WhatsAppFab connectInView={connectInView} pastHero={pastHero} />
-    </div>
+    </>
   );
 }
