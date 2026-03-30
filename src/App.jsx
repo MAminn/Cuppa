@@ -122,7 +122,7 @@ function Nav() {
       <div className='flex items-center justify-between px-6 md:px-12 lg:px-16 py-5'>
         <a
           href='#'
-          className='text-[30px] font-semibold tracking-[0.5em] text-white uppercase no-underline'>
+          className='text-[30px] font-bold tracking-[0.5em] text-white uppercase no-underline'>
           CUPPA
         </a>
         <a
@@ -156,10 +156,10 @@ function Hero() {
     <section className='relative min-h-screen flex flex-col justify-end bg-[#0a0a0a] overflow-hidden px-6 md:px-12 lg:px-16 pb-32 md:pb-44'>
       {/* Background texture */}
       <div
-        className='absolute inset-0 pointer-events-none opacity-20'
+        className='absolute inset-0 pointer-events-none opacity-[0.15]'
         style={{
           backgroundImage:
-            "url('https://images.unsplash.com/photo-1582655299221-2b6bff351df0?w=1920&q=80')",
+            "url('https://images.unsplash.com/photo-1565084888279-aca607ecce0c?w=1920&q=80')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           mixBlendMode: "luminosity",
@@ -171,6 +171,14 @@ function Hero() {
         style={{
           background:
             "radial-gradient(ellipse 80% 60% at 50% 40%, rgba(255,255,255,0.03) 0%, transparent 70%)",
+        }}
+      />
+      {/* Bottom gradient for readability */}
+      <div
+        className='absolute inset-0 pointer-events-none'
+        style={{
+          background:
+            "linear-gradient(to top, #0a0a0a 0%, #0a0a0a 15%, transparent 60%)",
         }}
       />
 
@@ -281,7 +289,7 @@ function Marquee() {
  * ═══════════════════════════════════════════════════════════════════════ */
 function About() {
   return (
-    <section className='relative bg-[#f8f7f5] border-t border-black/[0.06] py-32 md:py-48 px-6 md:px-12 lg:px-16 overflow-hidden'>
+    <section className='relative bg-[#f8f7f5] border-t border-b border-black/[0.06] py-32 md:py-48 px-6 md:px-12 lg:px-16 overflow-hidden'>
       {/* Decorative 01 */}
       <span className='absolute top-8 left-6 md:left-12 text-[8rem] md:text-[12rem] font-[100] text-black/[0.03] select-none pointer-events-none leading-none'>
         01
@@ -437,7 +445,7 @@ function Connect() {
               href='https://wa.me/20XXXXXXXXXX'
               target='_blank'
               rel='noopener noreferrer'
-              className='group inline-flex items-center gap-3 bg-[#0a0a0a] text-white px-12 py-5 border-0 outline-none ring-0 focus:outline-none focus:ring-0 no-underline w-full sm:w-auto justify-center'
+              className='group inline-flex items-center gap-3 bg-[#0a0a0a] text-white px-12 py-5 border-none outline-none ring-0 focus:outline-none focus:ring-0 no-underline w-full sm:w-auto justify-center'
               whileHover={{ y: -2 }}
               transition={{ duration: 0.25, ease: "easeOut" }}>
               <WhatsAppIcon className='w-[18px] h-[18px] opacity-60 group-hover:opacity-100 transition-opacity duration-300' />
